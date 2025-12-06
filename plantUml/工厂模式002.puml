@@ -12,13 +12,13 @@ participant "爱奇艺会员卡" as IQiYiCardService
 LotteryService -> LotteryService: 抽奖算法抽奖\n获得抽奖结果中的奖品类型
 LotteryService -> StoreFactory: 根据奖品类型获取对应的服务
 alt prize_type = "优惠券"
-   StoreFactory -> StoreFactory: 优惠券类型\n返回优惠券服务
+   StoreFactory -> LotteryService: 优惠券类型\n返回优惠券服务
    LotteryService -> CouponService: 调用优惠券服务
 else prize_type = "实物商品"
-   StoreFactory -> StoreFactory: 实物商品类型\n返回实物商品服务
+   StoreFactory -> LotteryService: 实物商品类型\n返回实物商品服务
    LotteryService -> GoodsService: 调用实物商品服务
 else prize_type = "爱奇艺会员卡"
-  StoreFactory -> StoreFactory: 爱奇艺会员卡类型\n返回爱奇艺会员卡服务
+  StoreFactory -> LotteryService: 爱奇艺会员卡类型\n返回爱奇艺会员卡服务
   LotteryService -> IQiYiCardService: 调用爱奇艺会员卡服务
 else "未知类型"
   StoreFactory -> StoreFactory: 抛出错误
