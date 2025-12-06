@@ -1,0 +1,26 @@
+@startuml
+title 抽奖活动if-else实现流程
+
+actor 客户端
+participant "抽奖服务" as LotteryService
+participant "优惠券" as CouponService
+participant "实物商品" as GoodsService
+participant "爱奇艺会员卡" as IQiYiCardService
+
+客户端 -> LotteryService: 抽奖
+LotteryService -> LotteryService: 抽奖算法抽奖\n获得抽奖结果中的奖品类型
+alt prize_type = "优惠券"
+   LotteryService -> LotteryService: 优惠券类型
+   LotteryService -> CouponService: 调用优惠券服务
+else prize_type = "实物商品"
+   LotteryService -> LotteryService: 实物商品类型
+   LotteryService -> GoodsService: 调用实物商品服务
+else prize_type = "爱奇艺会员卡"å
+  LotteryService -> LotteryService: 爱奇艺会员卡类型
+  LotteryService -> IQiYiCardService: 调用爱奇艺会员卡服务
+else "未中奖"
+  LotteryService -> LotteryService: 不中奖处理
+end
+
+LotteryService -> 客户端: 响应结果
+@enduml
