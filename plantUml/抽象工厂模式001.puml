@@ -1,0 +1,17 @@
+@startuml
+title redis调用（兼容单机和集群）if-else实现流程
+
+participant "缓存服务" as CacheService
+participant "EGM缓存" as EGM
+participant "IIR缓存" as IIR
+participant "redis缓存" as RedisUtils
+
+CacheService -> CacheService: 使用缓存服务
+alt cache_type = "EGM"
+   CacheService -> EGM: 使用EGM缓存
+else cache_type = "IIR"
+   CacheService -> IIR: 使用IIR缓存
+else "其它"
+  CacheService -> RedisUtils: 使用redis缓存
+end
+@enduml

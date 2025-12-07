@@ -1,0 +1,30 @@
+@startuml
+title redis调用（兼容单机和集群）if-else实现流程
+
+participant "缓存配置类" as CacheConfig
+participant "jdk动态代理类生成器（抽象工厂）" as JDKProxy
+participant "缓存服务代理对象处理器" as JDKInvocationHandler
+participant "缓存服务" as CacheService
+participant "EGM缓存适配器（EGM缓存工厂）" as EGMCacheAdapter
+participant "IIR缓存适配器（IIR缓存工厂）" as IIRCacheAdapter
+participant "redis缓存（Redis缓存工厂）" as RedisUtils
+
+CacheConfig -> CacheConfig: 读取配置中的缓存类型
+alt cache_type = "EGM"
+   CacheConfig -> JDKProxy: 根据CacheService接口和EGMCacheAdapter被代理类生成代理类
+   CacheService -> CacheService: 使用缓存服务，调用缓存api
+   CacheService -> JDKInvocationHandler: 根据缓存api的方法签名去EGMCacheAdapter找到对应的方法
+   JDKInvocationHandler -> EGMCacheAdapter: 调用EGMCacheAdapter中对应的方法
+else cache_type = "IIR"
+   CacheConfig -> JDKProxy: 根据CacheService接口和IIRCacheAdapter被代理类生成代理类
+   CacheService -> CacheService: 使用缓存服务，调用缓存api
+   CacheService -> JDKInvocationHandler: 根据缓存api的方法签名去IIRCacheAdapter找到对应的方法
+   JDKInvocationHandler -> IIRCacheAdapter: 调用IIRCacheAdapter中对应的方法
+else cache_type = "redis"
+   CacheConfig -> JDKProxy: 根据CacheService接口和RedisUtils被代理类生成代理类
+   CacheService -> CacheService: 使用缓存服务，调用缓存api
+   CacheService -> JDKInvocationHandler: 根据缓存api的方法签名去RedisUtils找到对应的方法
+   JDKInvocationHandler -> RedisUtils: 调用RedisUtils中对应的方法
+end
+CacheService -> CacheService: 获取缓存结果
+@enduml
